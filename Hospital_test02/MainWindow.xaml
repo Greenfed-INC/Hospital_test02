@@ -1,0 +1,176 @@
+﻿<Window x:Class="Hospital_test02.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Hospital_test02"
+        mc:Ignorable="d"
+        Title="Мед.учереждение - Главное меню" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Цвета в стиле Windows 11 (сине-белая тема) -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#0067C0"/>
+        <SolidColorBrush x:Key="PrimaryLightBrush" Color="#E5F1FB"/>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="White"/>
+        <SolidColorBrush x:Key="ForegroundBrush" Color="#FF1A1A1A"/>
+        <SolidColorBrush x:Key="ButtonBackground" Color="White"/>
+        <SolidColorBrush x:Key="ButtonHoverBackground" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="ButtonPressedBackground" Color="#E5E5E5"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0"/>
+        <SolidColorBrush x:Key="SidebarBackground" Color="#E5F1FB"/>
+        <SolidColorBrush x:Key="HeaderBackground" Color="White"/>
+        <SolidColorBrush x:Key="SelectionColor" Color="#0067C0"/>
+
+        <!-- Стиль для навигационных кнопок -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="8,4"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border" 
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <Grid>
+                                <Rectangle x:Name="SelectionIndicator" 
+                                           Fill="{StaticResource SelectionColor}" 
+                                           Width="4" 
+                                           HorizontalAlignment="Left"
+                                           Opacity="0"/>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ButtonHoverBackground}"/>
+                                <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource ButtonPressedBackground}"/>
+                                <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для заголовков -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#0067C0"/>
+        </Style>
+
+        <!-- Анимация для боковой панели -->
+        <Storyboard x:Key="SidebarOpenAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Width"
+                             From="0" To="180" 
+                             Duration="0:0:0.3"
+                             DecelerationRatio="0.5"/>
+        </Storyboard>
+        <Storyboard x:Key="SidebarCloseAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Width"
+                             From="180" To="0" 
+                             Duration="0:0:0.3"
+                             AccelerationRatio="0.5"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="26"/>
+            <ColumnDefinition Width="154"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Кнопка управления боковой панелью -->
+        <Button x:Name="SidebarToggleButton" 
+                Grid.Column="0"
+                Width="20" Height="40" 
+                HorizontalAlignment="Left" VerticalAlignment="Center"
+                Panel.ZIndex="1"
+                Background="#0067C0"
+                Foreground="White"
+                Click="SidebarToggleButton_Click">
+            <Button.Content>
+                <Path Data="M0,0 L10,10 L0,20" 
+                      Stroke="White" 
+                      StrokeThickness="2"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <RotateTransform x:Name="ArrowTransform" Angle="0"/>
+                    </Path.RenderTransform>
+                </Path>
+            </Button.Content>
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="0,4,4,0">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <!-- Боковая панель с логотипом -->
+        <Border x:Name="Sidebar" 
+                Grid.Column="0" 
+                Width="180" 
+                Background="#E5F1FB"
+                RenderTransformOrigin="0,0" Grid.ColumnSpan="2">
+            <StackPanel>
+                <!-- Логотип 128x128 -->
+                <Image Source="C:\Users\Green\source\repos\Hospital_test02\Hospital_test02\images\hospital-building (1).png" 
+                       Width="128" Height="128" 
+                       Margin="0,20,0,30" HorizontalAlignment="Center"/>
+
+                <!-- Навигационные кнопки -->
+                <Button Content="Список пациентов" 
+                        Style="{StaticResource NavButtonStyle}"
+                        Click="PatientsList_Click"/>
+                <Button Content="Настройки" 
+                        Style="{StaticResource NavButtonStyle}"
+                        Click="Settings_Click"/>
+                <Button Content="О программе" 
+                        Style="{StaticResource NavButtonStyle}"
+                        Click="About_Click"/>
+                <!-- Новая кнопка настроек -->
+            </StackPanel>
+        </Border>
+
+        <!-- Основное содержимое -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Заголовок -->
+            <Border Grid.Row="0" Background="White" 
+                    Padding="20,12" CornerRadius="0,0,8,8">
+                <TextBlock x:Name="TitleText" Text="Главная" 
+                           Style="{StaticResource HeaderTextStyle}"/>
+            </Border>
+
+            <!-- Контентная область -->
+            <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"
+                   Margin="20" Background="White"/>
+        </Grid>
+    </Grid>
+</Window>
